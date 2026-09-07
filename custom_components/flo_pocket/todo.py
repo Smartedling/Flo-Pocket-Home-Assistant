@@ -22,7 +22,7 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
-    """Create one entity for each Pocket category, custom list and the archive."""
+    """Create one entity for each Pocket category, custom list and shopping archive."""
     coordinator: FloPocketCoordinator = entry.runtime_data
     specs = [(category, "", name) for category, name in CATEGORY_NAMES.items()]
     custom = sorted({
@@ -31,7 +31,7 @@ async def async_setup_entry(
         if str(item.get("listName", "")).strip()
     })
     specs.extend(("LISTE", name, name) for name in custom)
-    specs.append(("ARCHIVE", "", "Archiv"))
+    specs.append(("ARCHIVE", "Einkaufsliste", "Archiv Einkaufsliste"))
     async_add_entities(
         [FloPocketTodo(coordinator, category, list_name, name) for category, list_name, name in specs],
         True,
@@ -64,7 +64,11 @@ class FloPocketTodo(CoordinatorEntity[FloPocketCoordinator], TodoListEntity):
 
     def _matches(self, item: dict[str, Any]) -> bool:
         if self.category == "ARCHIVE":
-            return bool(item.get("archived"))
+            return (
+                bool(item.get("archived"))
+                and str(item.get("listName", "")).strip().casefold()
+                == self.list_name.casefold()
+            )
         if item.get("archived"):
             return False
         if self.list_name:
@@ -96,12 +100,11 @@ class FloPocketTodo(CoordinatorEntity[FloPocketCoordinator], TodoListEntity):
         if not item.uid:
             return
         done = item.status == TodoItemStatus.COMPLETED
-        archived = done if self.category != "ARCHIVE" else done
         await self.coordinator.update(
             item.uid,
             item.summary or "",
             done,
-            archived,
+            done,
         )
 
     async def async_delete_todo_items(self, uids: list[str]) -> None:
