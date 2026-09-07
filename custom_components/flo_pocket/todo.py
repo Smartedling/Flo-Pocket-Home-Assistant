@@ -56,8 +56,9 @@ SHOPPING_GROUP_LABELS = {
 
 
 def _normalize(value: str) -> str:
-    text = unicodedata.normalize("NFKD", value.casefold())
-    return "".join(char for char in text if not unicodedata.combining(char)).replace("ß", "ss")
+    text = value.casefold().replace("ä", "ae").replace("ö", "oe").replace("ü", "ue").replace("ß", "ss")
+    text = unicodedata.normalize("NFKD", text)
+    return "".join(char for char in text if not unicodedata.combining(char))
 
 
 def _shopping_group(title: str) -> str:
