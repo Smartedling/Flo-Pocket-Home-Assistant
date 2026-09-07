@@ -55,10 +55,17 @@ class FloPocketCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
         }})
         await self.async_request_refresh()
 
-    async def update(self, uid: str, title: str, done: bool) -> None:
-        await self._request("POST", {"action": "update", "item": {
-            "id": uid, "title": title, "done": done
-        }})
+    async def update(
+        self,
+        uid: str,
+        title: str,
+        done: bool,
+        archived: bool | None = None,
+    ) -> None:
+        item = {"id": uid, "title": title, "done": done}
+        if archived is not None:
+            item["archived"] = archived
+        await self._request("POST", {"action": "update", "item": item})
         await self.async_request_refresh()
 
     async def delete(self, uids: list[str]) -> None:
