@@ -22,7 +22,7 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
-    """Create one entity for each Pocket category and custom list."""
+    """Create one entity for each Pocket category, custom list and the archive."""
     coordinator: FloPocketCoordinator = entry.runtime_data
     specs = [(category, "", name) for category, name in CATEGORY_NAMES.items()]
     custom = sorted({
@@ -31,6 +31,7 @@ async def async_setup_entry(
         if str(item.get("listName", "")).strip()
     })
     specs.extend(("LISTE", name, name) for name in custom)
+    specs.append(("ARCHIVE", "", "Archiv"))
     async_add_entities(
         [FloPocketTodo(coordinator, category, list_name, name) for category, list_name, name in specs],
         True,
@@ -41,11 +42,6 @@ class FloPocketTodo(CoordinatorEntity[FloPocketCoordinator], TodoListEntity):
     """A Flo Pocket list in Home Assistant."""
 
     _attr_has_entity_name = True
-    _attr_supported_features = (
-        TodoListEntityFeature.CREATE_TODO_ITEM
-        | TodoListEntityFeature.UPDATE_TODO_ITEM
-        | TodoListEntityFeature.DELETE_TODO_ITEM
-    )
 
     def __init__(
         self,
@@ -59,8 +55,18 @@ class FloPocketTodo(CoordinatorEntity[FloPocketCoordinator], TodoListEntity):
         self.list_name = list_name
         self._attr_name = name
         self._attr_unique_id = f"flo_pocket_{category.lower()}_{list_name.lower()}"
+        self._attr_supported_features = (
+            TodoListEntityFeature.UPDATE_TODO_ITEM
+            | TodoListEntityFeature.DELETE_TODO_ITEM
+        )
+        if category != "ARCHIVE":
+            self._attr_supported_features |= TodoListEntityFeature.CREATE_TODO_ITEM
 
     def _matches(self, item: dict[str, Any]) -> bool:
+        if self.category == "ARCHIVE":
+            return bool(item.get("archived"))
+        if item.get("archived"):
+            return False
         if self.list_name:
             return str(item.get("listName", "")).strip() == self.list_name
         return item.get("category") == self.category and not str(item.get("listName", "")).strip()
@@ -82,15 +88,20 @@ class FloPocketTodo(CoordinatorEntity[FloPocketCoordinator], TodoListEntity):
         self._handle_coordinator_update()
 
     async def async_create_todo_item(self, item: TodoItem) -> None:
+        if self.category == "ARCHIVE":
+            return
         await self.coordinator.add(item.summary or "", self.category, self.list_name)
 
     async def async_update_todo_item(self, item: TodoItem) -> None:
         if not item.uid:
             return
+        done = item.status == TodoItemStatus.COMPLETED
+        archived = done if self.category != "ARCHIVE" else done
         await self.coordinator.update(
             item.uid,
             item.summary or "",
-            item.status == TodoItemStatus.COMPLETED,
+            done,
+            archived,
         )
 
     async def async_delete_todo_items(self, uids: list[str]) -> None:
