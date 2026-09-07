@@ -61,6 +61,7 @@ class FloPocketTodo(CoordinatorEntity[FloPocketCoordinator], TodoListEntity):
         )
         if category != "ARCHIVE":
             self._attr_supported_features |= TodoListEntityFeature.CREATE_TODO_ITEM
+        self._refresh_items()
 
     def _matches(self, item: dict[str, Any]) -> bool:
         if self.category == "ARCHIVE":
@@ -75,7 +76,7 @@ class FloPocketTodo(CoordinatorEntity[FloPocketCoordinator], TodoListEntity):
             return str(item.get("listName", "")).strip() == self.list_name
         return item.get("category") == self.category and not str(item.get("listName", "")).strip()
 
-    def _handle_coordinator_update(self) -> None:
+    def _refresh_items(self) -> None:
         self._attr_todo_items = [
             TodoItem(
                 uid=str(item["id"]),
@@ -86,10 +87,13 @@ class FloPocketTodo(CoordinatorEntity[FloPocketCoordinator], TodoListEntity):
             for item in self.coordinator.data
             if self._matches(item)
         ]
+
+    def _handle_coordinator_update(self) -> None:
+        self._refresh_items()
         super()._handle_coordinator_update()
 
     async def async_update(self) -> None:
-        self._handle_coordinator_update()
+        self._refresh_items()
 
     async def async_create_todo_item(self, item: TodoItem) -> None:
         if self.category == "ARCHIVE":
