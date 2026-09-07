@@ -34,19 +34,22 @@ SHOPPING_GROUPS = {
         "zahnpasta", "zahnbuerste", "duschgel", "shampoo", "seife",
         "deo", "rasierer", "windel", "binde", "tampon", "kosmetik",
     )),
-    "KUECHE": ("Küche & Verbrauch", (
-        "alufolie", "aluminiumfolie", "frischhaltefolie", "backpapier",
-        "muellsack", "muellbeutel", "gefrierbeutel", "zip beutel",
-        "serviette", "strohhalm", "zahnstocher", "kaffeefilter",
+    "BROT": ("Brot", (
+        "brot", "semmel", "weckerl", "toast", "gebaeck", "croissant",
+        "baguette", "kornspitz", "mohnflesserl",
+    )),
+    "TIEFKUEHL": ("Tiefkühl", (
+        "tiefkuehl", "tiefkuhl", "tk ", "tk-", "gefroren", "frost",
+        "eiscreme", "speiseeis", "tiefkuehlpizza", "tiefkuehlgemuese",
     )),
     "LEBENSMITTEL": ("Lebensmittel", (
-        "brot", "semmel", "weckerl", "toast", "milch", "butter", "kaese",
-        "joghurt", "topfen", "obers", "ei", "fleisch", "wurst", "schinken",
-        "fisch", "nudel", "reis", "mehl", "zucker", "salz", "pfeffer",
-        "oel", "essig", "kartoffel", "erdapfel", "zwiebel", "knoblauch",
-        "tomate", "gurke", "paprika", "salat", "gemuese", "obst", "apfel",
-        "banane", "orange", "zitrone", "beere", "muesli", "cornflakes",
-        "schokolade", "keks", "chips", "pizza", "tiefkuehl", "sauce",
+        "milch", "butter", "kaese", "joghurt", "topfen", "obers", "ei",
+        "fleisch", "wurst", "schinken", "fisch", "nudel", "reis", "mehl",
+        "zucker", "salz", "pfeffer", "oel", "essig", "kartoffel",
+        "erdapfel", "zwiebel", "knoblauch", "tomate", "gurke", "paprika",
+        "salat", "gemuese", "obst", "apfel", "banane", "orange", "zitrone",
+        "beere", "muesli", "cornflakes", "schokolade", "keks", "chips",
+        "sauce",
     )),
 }
 SHOPPING_GROUP_LABELS = {
