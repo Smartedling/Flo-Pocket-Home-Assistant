@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Flo Pocket verbinden",
+        "description": "Verbinde deine Pocket-Listen mit Home Assistant.",
+        "data": {"url": "Server-Adresse", "token": "Sync-Code"}
+      }
+    },
+    "error": {"cannot_connect": "Verbindung fehlgeschlagen", "invalid_auth": "Sync-Code ist ungültig"},
+    "abort": {"already_configured": "Flo Pocket ist bereits eingerichtet"}
+  }
+}
