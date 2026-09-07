@@ -1,0 +1,10 @@
+{
+  "domain": "flo_pocket",
+  "name": "Flo Pocket",
+  "codeowners": [],
+  "config_flow": true,
+  "documentation": "https://github.com/Smartedling/Flo-Pocket-Home-Assistant",
+  "iot_class": "cloud_polling",
+  "requirements": [],
+  "version": "1.0.0"
+}
