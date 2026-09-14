@@ -17,45 +17,21 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from .const import CATEGORY_NAMES
 from .coordinator import FloPocketCoordinator
 
-SHOPPING_LIST = "Einkaufsliste"
+SHOPPING_LIST_NAMES = {"einkauf", "einkaufen", "einkaufsliste", "einkaufenliste", "einkaufs"}
 SHOPPING_GROUPS = {
-    "GETRAENKE": ("Getränke", (
-        "wasser", "saft", "limo", "cola", "fanta", "sprite", "bier", "wein",
-        "sekt", "kaffee", "tee", "sirup", "milchdrink", "energy",
-    )),
-    "HAUSHALT": ("Haushalt & Reinigung", (
-        "waschmittel", "weichspueler", "spuelmittel", "geschirrspueltab",
-        "spueltab", "reiniger", "putzmittel", "schwamm", "putztuch",
-        "mikrofasertuch", "besen", "staubsaugerbeutel", "entkalker",
-        "klarspueler", "salz geschirrspueler",
-    )),
-    "HYGIENE": ("Hygiene & Papier", (
-        "klopapier", "toilettenpapier", "taschentuch", "kuechenrolle",
-        "zahnpasta", "zahnbuerste", "duschgel", "shampoo", "seife",
-        "deo", "rasierer", "windel", "binde", "tampon", "kosmetik",
-    )),
-    "BROT": ("Brot", (
-        "brot", "semmel", "weckerl", "toast", "gebaeck", "croissant",
-        "baguette", "kornspitz", "mohnflesserl",
-    )),
-    "TIEFKUEHL": ("Tiefkühl", (
-        "tiefkuehl", "tiefkuhl", "tk ", "tk-", "gefroren", "frost",
-        "eiscreme", "speiseeis", "tiefkuehlpizza", "tiefkuehlgemuese",
-    )),
-    "LEBENSMITTEL": ("Lebensmittel", (
-        "milch", "butter", "kaese", "joghurt", "topfen", "obers", "ei",
-        "fleisch", "wurst", "schinken", "fisch", "nudel", "reis", "mehl",
-        "zucker", "salz", "pfeffer", "oel", "essig", "kartoffel",
-        "erdapfel", "zwiebel", "knoblauch", "tomate", "gurke", "paprika",
-        "salat", "gemuese", "obst", "apfel", "banane", "orange", "zitrone",
-        "beere", "muesli", "cornflakes", "schokolade", "keks", "chips",
-        "sauce",
-    )),
+    "OBST_GEMUESE": ("Obst & Gemüse", ("obst", "gemuese", "salat", "suppengruen", "kartoffel", "zwiebel", "knoblauch", "tomate", "gurke", "paprika", "karotte", "apfel", "birne", "banane", "orange", "mandarine", "zitrone", "beere", "traube", "melone", "pilz", "champignon", "ingwer", "sprossen")),
+    "GEBAECK": ("Gebäck", ("semmel", "weckerl", "kornspitz", "frisches brot", "frischbrot", "frisches baguette", "croissant", "gebaeck")),
+    "FRUEHSTUECK_SUESSES_WEIN": ("Frühstück, Süßes & Wein", ("muesli", "cornflakes", "marmelade", "honig", "kaffee", "tee", "kakao", "aufbackweckerl", "toast", "schokolade", "gummizeug", "gummibaer", "suessigkeit", "weisswein", "rotwein", "rose", "wein", "frizzante", "prosecco", "sekt")),
+    "FLEISCH_FISCH": ("Fleisch & Fisch", ("huhn", "huehner", "pute", "truthahn", "schwein", "rind", "kalb", "faschiert", "hackfleisch", "steak", "schnitzel", "kotelett", "fisch", "lachs", "forelle", "thunfisch", "meeresfruechte", "garnele")),
+    "BIER_KNABBERZEUG": ("Bier & Knabberzeug", ("bier", "radler", "chips", "soletti", "salzstange", "brezel", "cracker", "snacknuss", "keks", "waffel")),
+    "WURST_GRILLEN_GEWUERZE": ("Wurst, Grillen & Gewürze", ("schinken", "frankfurter", "berner wuerst", "grillfleisch", "grillgut", "kraeuterbaguette", "knoblauchbaguette", "salz", "pfeffer", "majoran", "oregano", "gewuerz", "wuerzmischung")),
+    "KAESE_MILCH_VORRAETE": ("Käse, Milch & Vorräte", ("kaese", "parmesan", "mozzarella", "gouda", "emmentaler", "hartwurst", "salamistange", "knabbernossi", "speckwuerfel", "nudel", "spaghetti", "spiralen", "hoernchen", "tomatensugo", "olive", "milch", "joghurt", "rahm", "schlagobers", "creme fraiche")),
+    "BACKEN_OELE_KONSERVEN": ("Backen, Öle & Konserven", ("eier", " ei ", "mehl", "kristallzucker", "staubzucker", "vanillezucker", "backpulver", "backzutat", "olivenoel", "sonnenblumenoel", "rapsoel", "speiseoel", "essig", "dosenmais", "mais in dos", "pfirsichhaelfte", "dosenpfirsich", "konserve")),
+    "HYGIENE_REINIGUNG": ("Hygiene & Reinigung", ("klopapier", "toilettenpapier", "kuechenrolle", "taschentuch", "duschgel", "shampoo", "haarspuelung", "zahnbuerste", "zahnpasta", "putzmittel", "geschirrspuel", "spuelmittel", "waschmaschinenreiniger", "waschmittel", "weichspueler")),
+    "GETRAENKE_TIEFKUEHL": ("Getränke & Tiefkühl", ("tiefkuehl", "tiefkuhl", "tk ", "tk-", "pizza", "piccolini", "eiscreme", "speiseeis", "mineralwasser", "cola", "limonade", "himbeersaft", "orangensaft", "apfelsaft", "fruchtsaft", "red bull", "energy drink")),
 }
-SHOPPING_GROUP_LABELS = {
-    **{key: value[0] for key, value in SHOPPING_GROUPS.items()},
-    "SONSTIGES": "Sonstiges",
-}
+SHOPPING_GROUP_LABELS = {**{key: value[0] for key, value in SHOPPING_GROUPS.items()}, "SONSTIGES": "Sonstiges"}
+SHOPPING_LABEL_TO_GROUP = {label.casefold(): key for key, label in SHOPPING_GROUP_LABELS.items()}
 
 
 def _normalize(value: str) -> str:
@@ -64,8 +40,11 @@ def _normalize(value: str) -> str:
     return "".join(char for char in text if not unicodedata.combining(char))
 
 
-def _shopping_group(title: str) -> str:
-    normalized = _normalize(title)
+def _shopping_group(item: dict[str, Any]) -> str:
+    requested = str(item.get("shoppingSection", "")).strip().casefold()
+    if requested in SHOPPING_LABEL_TO_GROUP:
+        return SHOPPING_LABEL_TO_GROUP[requested]
+    normalized = f" {_normalize(str(item.get('title', '')))} "
     for group, (_, keywords) in SHOPPING_GROUPS.items():
         if any(keyword in normalized for keyword in keywords):
             return group
@@ -87,10 +66,10 @@ async def async_setup_entry(
     })
     specs.extend(("LISTE", name, name) for name in custom)
     specs.extend(
-        (f"SHOPPING_{group}", SHOPPING_LIST, label)
+        (f"SHOPPING_{group}", "Einkaufen", label)
         for group, label in SHOPPING_GROUP_LABELS.items()
     )
-    specs.append(("ARCHIVE", SHOPPING_LIST, "Archiv Einkaufsliste"))
+    specs.append(("ARCHIVE", "Einkaufen", "Archiv Einkaufsliste"))
     async_add_entities(
         [FloPocketTodo(coordinator, category, list_name, name) for category, list_name, name in specs],
         True,
@@ -123,10 +102,8 @@ class FloPocketTodo(CoordinatorEntity[FloPocketCoordinator], TodoListEntity):
         self._refresh_items()
 
     def _is_shopping_item(self, item: dict[str, Any]) -> bool:
-        return (
-            str(item.get("listName", "")).strip().casefold()
-            == SHOPPING_LIST.casefold()
-        )
+        key = "".join(char for char in _normalize(str(item.get("listName", ""))) if char.isalnum())
+        return key in SHOPPING_LIST_NAMES
 
     def _matches(self, item: dict[str, Any]) -> bool:
         if self.category == "ARCHIVE":
@@ -135,9 +112,7 @@ class FloPocketTodo(CoordinatorEntity[FloPocketCoordinator], TodoListEntity):
             return False
         if self.category.startswith("SHOPPING_"):
             group = self.category.removeprefix("SHOPPING_")
-            return self._is_shopping_item(item) and _shopping_group(
-                str(item.get("title", ""))
-            ) == group
+            return self._is_shopping_item(item) and _shopping_group(item) == group
         if self.list_name:
             return str(item.get("listName", "")).strip() == self.list_name
         return item.get("category") == self.category and not str(item.get("listName", "")).strip()
