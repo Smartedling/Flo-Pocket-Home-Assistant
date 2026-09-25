@@ -22,7 +22,7 @@ class FloPocketCoordinator(DataUpdateCoordinator[list[dict[str, Any]]]):
             hass,
             logger=__import__("logging").getLogger(__name__),
             name=DOMAIN,
-            update_interval=timedelta(minutes=10),
+            update_interval=timedelta(hours=1),
         )
         self.url = entry.data[CONF_URL].rstrip("/") + "/api/sync"
         self.token = entry.data[CONF_TOKEN]
